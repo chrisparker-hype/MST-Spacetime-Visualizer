@@ -71,3 +71,17 @@ with col2:
 
 st.divider()
 st.write("**Researcher Note:** This simulation visualizes the transition from a locally orientable path to a globally non-orientable state, incorporating a linear entropy gradient.")
+
+with st.sidebar.expander("🛡️ What MST Does Not Claim", expanded=False):
+    st.warning("""
+    1. **Physicality:** Does not claim time travel is possible/impossible.
+    2. **Supersession:** Does not supersede GR or Quantum Mechanics.
+    3. **Verification:** Structure is not experimentally verified.
+    4. **Definitive Solution:** Does not 'solve' paradoxes, but reframes them.
+    """)
+
+with st.sidebar.expander("🌀 The Paradox-Free Framework", expanded=True):
+    st.info("""
+    **Insight:** Paradoxes may be artifacts of linear-orientation assumptions. 
+    **Topology:** Using Munkres' Quotient Topology, MST suggests that a 2π traversal results in a topological 'flip,' rendering standard 'Grandfather Paradoxes' null by altering the system's global state before intersection occurs.
+    """)
