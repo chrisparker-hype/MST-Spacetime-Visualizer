@@ -117,3 +117,17 @@ fig.add_trace(go.Scatter3d(
     marker=dict(size=8, color=['green', 'yellow']),
     name='Start vs End of Lap'
 ))
+# 1. First, you create the main Möbius surface
+fig = go.Figure(data=[go.Mesh3d(...)]) 
+
+# 2. THE PATH CODE MUST GO HERE (Before the chart is called)
+fig.add_trace(go.Scatter3d(
+    x=x_path, y=y_path, z=z_path,
+    mode='lines',
+    line=dict(color='red', width=5),
+    name='Observer Path'
+))
+
+# 3. ONLY THEN DO YOU CALL THE CHART
+st.plotly_chart(fig)
+
