@@ -85,6 +85,7 @@ with st.sidebar.expander("🌀 The Paradox-Free Framework", expanded=True):
     **Insight:** Paradoxes may be artifacts of linear-orientation assumptions. 
     **Topology:** Using Munkres' Quotient Topology, MST suggests that a 2π traversal results in a topological 'flip,' rendering standard 'Grandfather Paradoxes' null by altering the system's global state before intersection occurs.
     """)
+    
 import numpy as np
 import plotly.graph_objects as go
 
@@ -116,4 +117,3 @@ fig.add_trace(go.Scatter3d(
     marker=dict(size=8, color=['green', 'yellow']),
     name='Start vs End of Lap'
 ))
-
