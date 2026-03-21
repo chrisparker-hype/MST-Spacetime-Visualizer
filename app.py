@@ -87,18 +87,36 @@ with st.sidebar.expander("🌀 The Paradox-Free Framework", expanded=True):
     """)
     
 
-# 1. First, you create the main Möbius surface
-fig = go.Figure(data=[go.Mesh3d(...)]) 
+# 1. Create the base figure with ONLY the Möbius strip first
+fig = go.Figure(data=[go.Mesh3d(
+    x=x, y=y, z=z, 
+    i=i, j=j, k=k, 
+    intensity=z, 
+    colorscale='Viridis', 
+    opacity=0.8
+)])
 
-# 2. THE PATH CODE MUST GO HERE (Before the chart is called)
+# 2. NOW add the Observer Path separately (This prevents the ValueError)
 fig.add_trace(go.Scatter3d(
-    x=x_path, y=y_path, z=z_path,
+    x=x_path, 
+    y=y_path, 
+    z=z_path,
     mode='lines',
-    line=dict(color='red', width=5),
+    line=dict(color='red', width=6),
     name='Observer Path'
 ))
 
-# 3. ONLY THEN DO YOU CALL THE CHART
+# 3. Add the Start/End markers
+fig.add_trace(go.Scatter3d(
+    x=[x_path[0], x_path[-1]], 
+    y=[y_path[0], y_path[-1]], 
+    z=[z_path[0], z_path[-1]],
+    mode='markers',
+    marker=dict(size=10, color=['#00FF00', '#FFFF00']), # Green and Yellow
+    name='Start vs End of Lap'
+))
+
+# 4. Finally, display it
 st.plotly_chart(fig)
 
 import numpy as np
