@@ -85,3 +85,35 @@ with st.sidebar.expander("🌀 The Paradox-Free Framework", expanded=True):
     **Insight:** Paradoxes may be artifacts of linear-orientation assumptions. 
     **Topology:** Using Munkres' Quotient Topology, MST suggests that a 2π traversal results in a topological 'flip,' rendering standard 'Grandfather Paradoxes' null by altering the system's global state before intersection occurs.
     """)
+import numpy as np
+import plotly.graph_objects as go
+
+# ... (Keep your existing strip code) ...
+
+# 1. Define the Observer's Path
+t_path = np.linspace(0, 2*np.pi, 100) # One full lap
+w_path = 0 # Staying in the center of the strip
+
+# 2. Calculate the coordinates for the path
+x_path = (1 + w_path/2 * np.cos(t_path/2)) * np.cos(t_path)
+y_path = (1 + w_path/2 * np.cos(t_path/2)) * np.sin(t_path)
+z_path = w_path/2 * np.sin(t_path/2)
+
+# 3. Add the path to your figure
+fig.add_trace(go.Scatter3d(
+    x=x_path, y=y_path, z=z_path,
+    mode='lines',
+    line=dict(color='red', width=5),
+    name='Observer Path'
+))
+
+# 4. Add the "Start" and "Halfway" points to show the flip
+fig.add_trace(go.Scatter3d(
+    x=[x_path[0], x_path[-1]], 
+    y=[y_path[0], y_path[-1]], 
+    z=[z_path[0], z_path[-1]],
+    mode='markers',
+    marker=dict(size=8, color=['green', 'yellow']),
+    name='Start vs End of Lap'
+))
+
