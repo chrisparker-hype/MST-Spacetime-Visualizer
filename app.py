@@ -2,151 +2,79 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
-# --- PAGE CONFIGURATION ---
+# --- PAGE CONFIG ---
 st.set_page_config(page_title="MST Research Lab", layout="wide")
+st.title("Möbius Spacetime Theory (MST) Visualizer")
+st.write("Exploring Non-Orientable Temporal Manifolds and Paradox-Free Frameworks.")
 
-# --- SIDEBAR: THE "PAGE 7" NOTES ---
-st.sidebar.title("🔬 MST Research Lab")
-st.sidebar.markdown("**Researcher:** Chris (Nairobi, Kenya)")
-st.sidebar.divider()
-
-# 1. Assumptions
-with st.sidebar.expander("📝 Core Assumptions", expanded=False):
-    st.write("""
-    1. **Continuity:** Time modeled as a continuous strip.
-    2. **Topology:** Structure is non-orientable (Möbius analogy).
-    3. **Evolution:** Systems evolve *within* the structure.
-    4. **Causality:** Preserved via local continuity, not global direction.
-    """)
-
-# 2. Limitations
-with st.sidebar.expander("⚠️ Boundaries & Limitations", expanded=False):
-    st.write("""
-    * Lacks full mathematical formalism.
-    * Analogy is structurally suggestive, not yet physically derived.
-    * Entropy/Quantum connections are currently interpretive.
-    """)
-
-# 3. Open Questions
-with st.sidebar.expander("❓ Open Questions", expanded=True):
-    st.info("""
-    * Can non-orientability be expressed in Spacetime models?
-    * How does entropy interact with this structure?
-    * Are there observable consequences?
-    * What is the minimal math required for formalization?
-    """)
-
-# --- MAIN INTERFACE ---
-st.title("Möbius Spatetime Theory (MST)")
-st.subheader("Visualizing Global Non-Orientability and Temporal Entropy")
-
-# User Controls
-col1, col2 = st.columns([1, 3])
-
-with col1:
-    st.write("### Controls")
-    entropy_level = st.slider("Select Entropy Intensity", 0.0, 0.5, 0.05)
-    st.caption("Adjusting this simulates stochastic noise over a 4π rotation.")
-
-# --- THE MATH ENGINE ---
-u = np.linspace(0, 4 * np.pi, 100)
-v = np.linspace(-1, 1, 10)
+# --- 1. THE TOPOLOGICAL MATH (The Surface) ---
+# Create the u (angle) and v (width) coordinates
+u = np.linspace(0, 2 * np.pi, 100)
+v = np.linspace(-1, 1, 20)
 u, v = np.meshgrid(u, v)
 
-# Möbius Parametric Equations
-x = (1 + 0.5 * v * np.cos(u / 2)) * np.cos(u)
-y = (1 + 0.5 * v * np.cos(u / 2)) * np.sin(u)
-z = 0.5 * v * np.sin(u / 2)
+# Parametric equations for a Möbius Strip
+x = (1 + v/2 * np.cos(u/2)) * np.cos(u)
+y = (1 + v/2 * np.cos(u/2)) * np.sin(u)
+z = v/2 * np.sin(u/2)
 
-# Apply Entropy "Noise" based on slider
-noise = np.random.normal(0, entropy_level, x.shape) * (u / (4 * np.pi))
-x_n, y_n, z_n = x + noise, y + noise, z + noise
+# Flatten for Plotly Mesh3d
+x_flat, y_flat, z_flat = x.flatten(), y.flatten(), z.flatten()
 
-# --- THE VISUALIZATION ---
-fig = go.Figure(data=[go.Surface(x=x_n, y=y_n, z=z_n, colorscale='Viridis', opacity=0.8)])
-fig.update_layout(margin=dict(l=0, r=0, b=0, t=0), scene_camera=dict(eye=dict(x=1.5, y=1.5, z=0.8)))
+# --- 2. THE OBSERVER PATH MATH (The Red Line) ---
+# This simulates a particle traveling exactly one lap (360 degrees)
+t_path = np.linspace(0, 2 * np.pi, 100)
+w_path = 0  # Stay in the middle of the strip width
+x_p = (1 + w_path/2 * np.cos(t_path/2)) * np.cos(t_path)
+y_p = (1 + w_path/2 * np.cos(t_path/2)) * np.sin(t_path)
+z_p = w_path/2 * np.sin(t_path/2)
 
-with col2:
-    st.plotly_chart(fig, use_container_width=True)
+# --- 3. BUILDING THE 3D PLOT ---
+# Create the figure object
+fig = go.Figure()
 
-st.divider()
-st.write("**Researcher Note:** This simulation visualizes the transition from a locally orientable path to a globally non-orientable state, incorporating a linear entropy gradient.")
+# Add the Möbius Surface
+fig.add_trace(go.Mesh3d(
+    x=x_flat, y=y_flat, z=z_flat,
+    intensity=z_flat,
+    colorscale='Viridis',
+    opacity=0.5,
+    name='MST Manifold',
+    showscale=False
+))
 
-with st.sidebar.expander("🛡️ What MST Does Not Claim", expanded=False):
-    st.warning("""
-    1. **Physicality:** Does not claim time travel is possible/impossible.
-    2. **Supersession:** Does not supersede GR or Quantum Mechanics.
-    3. **Verification:** Structure is not experimentally verified.
-    4. **Definitive Solution:** Does not 'solve' paradoxes, but reframes them.
-    """)
-
-with st.sidebar.expander("🌀 The Paradox-Free Framework", expanded=True):
-    st.info("""
-    **Insight:** Paradoxes may be artifacts of linear-orientation assumptions. 
-    **Topology:** Using Munkres' Quotient Topology, MST suggests that a 2π traversal results in a topological 'flip,' rendering standard 'Grandfather Paradoxes' null by altering the system's global state before intersection occurs.
-    """)
-    
-
-# 1. Create the base figure with ONLY the Möbius strip first
-fig = go.Figure(data=[go.Mesh3d(
-    x=x, y=y, z=z, 
-    i=i, j=j, k=k, 
-    intensity=z, 
-    colorscale='Viridis', 
-    opacity=0.8
-)])
-
-# 2. NOW add the Observer Path separately (This prevents the ValueError)
+# Add the Red Observer Path
 fig.add_trace(go.Scatter3d(
-    x=x_path, 
-    y=y_path, 
-    z=z_path,
+    x=x_p, y=y_p, z=z_p,
     mode='lines',
     line=dict(color='red', width=6),
-    name='Observer Path'
+    name='Observer Path (1 Lap)'
 ))
 
-# 3. Add the Start/End markers
+# Add Start (Green) and End (Yellow) markers
 fig.add_trace(go.Scatter3d(
-    x=[x_path[0], x_path[-1]], 
-    y=[y_path[0], y_path[-1]], 
-    z=[z_path[0], z_path[-1]],
+    x=[x_p[0], x_p[-1]], 
+    y=[y_p[0], y_p[-1]], 
+    z=[z_p[0], z_p[-1]],
     mode='markers',
-    marker=dict(size=10, color=['#00FF00', '#FFFF00']), # Green and Yellow
+    marker=dict(size=10, color=['#00FF00', '#FFFF00']),
     name='Start vs End of Lap'
 ))
 
-# 4. Finally, display it
-st.plotly_chart(fig)
+# --- 4. LAYOUT SETTINGS ---
+fig.update_layout(
+    scene=dict(
+        xaxis_title='Space (X)',
+        yaxis_title='Space (Y)',
+        zaxis_title='Time (Z)'
+    ),
+    margin=dict(l=0, r=0, b=0, t=0),
+    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
+)
 
-import numpy as np
-import plotly.graph_objects as go
+# --- 5. DISPLAY IN STREAMLIT ---
+st.plotly_chart(fig, use_container_width=True)
 
-# ... (Keep your existing strip code) ...
-
-# 1. Define the Observer's Path
-t_path = np.linspace(0, 2*np.pi, 100) # One full lap
-w_path = 0 # Staying in the center of the strip
-
-# 2. Calculate the coordinates for the path
-x_path = (1 + w_path/2 * np.cos(t_path/2)) * np.cos(t_path)
-y_path = (1 + w_path/2 * np.cos(t_path/2)) * np.sin(t_path)
-z_path = w_path/2 * np.sin(t_path/2)
-
-# 3. Add the path to your figure
-fig.add_trace(go.Scatter3d(
-    x=x_path, y=y_path, z=z_path,
-    mode='lines',
-    line=dict(color='red', width=5),
-    name='Observer Path'
-))
-
-# 4. Add the "Start" and "Halfway" points to show the flip
-fig.add_trace(go.Scatter3d(
-    x=[x_path[0], x_path[-1]], 
-    y=[y_path[0], y_path[-1]], 
-    z=[z_path[0], z_path[-1]],
-    mode='markers',
-    marker=dict(size=8, color=['green', 'yellow']),
-    name='Start vs End of Lap'
-))
+st.sidebar.header("Research Parameters")
+st.sidebar.write("Theory: MST (Non-Orientable)")
+st.sidebar.info("The Red Path shows that after one lap ($2\pi$), the observer is flipped, preventing interaction with the past self.")
